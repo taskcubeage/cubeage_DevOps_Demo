@@ -1,0 +1,18 @@
+name: Sync Team Development To Company
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push to Company Repository
+        run: |
+          git remote add company https://x-access-token:${{ secrets.COMPANY_PAT }}@github.com/harshal5478/cubeage_DevOps_Demo.git
+          git push company development
