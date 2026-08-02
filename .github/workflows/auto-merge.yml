@@ -1,19 +1,19 @@
-name: Auto Merge Developer Branch
+name: Auto Merge and Sync to Company
 
 on:
   push:
     branches:
-      - 'dev_*'
+      - "dev_*"
 
 permissions:
   contents: write
 
 jobs:
-  merge:
+  merge-and-sync:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Team Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -23,10 +23,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge into development
+      - name: Fetch All Branches
         run: |
           git fetch origin
+
+      - name: Merge Developer Branch into Development
+        run: |
           git checkout development
-          git reset --hard origin/development
+          git pull origin development
           git merge origin/${{ github.ref_name }} --no-edit
           git push origin development
+
+      - name: Sync Development to Company Repository
+        env:
+          COMPANY_PAT: ${{ secrets.COMPANY_PAT }}
+        run: |
+          git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
+          git fetch company
+          git push company development
