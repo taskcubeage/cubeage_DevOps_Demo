@@ -1,9 +1,17 @@
-name: Auto Merge and Sync to Company
+
+name: Auto Merge to Development
+
 
 on:
   push:
     branches:
-      - "dev_*"
+
+      
+
+      - dev_harsh01
+      - dev_harsh02
+      - dev_harsh03
+
 
 permissions:
   contents: write
@@ -23,15 +31,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+
       - name: Fetch All Branches
         run: git fetch origin
 
       - name: Merge Developer Branch into Development
+
+      - name: Merge into development
+
         run: |
+          git fetch origin
           git checkout development
           git pull origin development
           git merge origin/${{ github.ref_name }} --no-edit
-          git push origin development
+
 
       - name: Check COMPANY_PAT
         run: |
@@ -49,3 +62,5 @@ jobs:
           git remote remove company || true
           git remote add company https://x-access-token:${COMPANY_PAT}@github.com/harshal5478/cubeage_DevOps_Demo.git
           git push company development
+
+
